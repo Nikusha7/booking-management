@@ -1,0 +1,170 @@
+_schema-version: 3.3.0
+ID: Bookings
+version: 1.0.0-SNAPSHOT
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+modules:
+  - name: Bookings-srv
+    type: java
+    path: srv
+    parameters:
+      instances: 1
+      buildpack: sap_java_buildpack_jakarta
+    properties:
+      SPRING_PROFILES_ACTIVE: cloud,sandbox
+      JBP_CONFIG_COMPONENTS: "jres: ['com.sap.xs.java.buildpack.jre.SAPMachineJRE']"
+      JBP_CONFIG_SAP_MACHINE_JRE: '{ version: 21.+ }'
+    build-parameters:
+      builder: custom
+      commands:
+        - mvn clean package -DskipTests=true --batch-mode
+      build-result: target/*-exec.jar
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: Bookings-auth
+      - name: Bookings-db
+      - name: Bookings-destination
+
+  - name: Bookings-db-deployer
+    type: hdb
+    path: db
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: custom
+      commands:
+        - npm run build
+    requires:
+      - name: Bookings-db
+
+  - name: Bookings-app-deployer
+    type: com.sap.application.content
+    path: .
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: Bookingsbooking
+          artifacts:
+            - booking.zip
+          target-path: resources
+    requires:
+      - name: Bookings-auth
+      - name: srv-api
+      - name: Bookings-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+    parameters:
+      config:
+        destinations:
+          - Name: srv-api
+            URL: ~{srv-api/srv-url}
+            Authentication: NoAuthentication
+            Type: HTTP
+            ProxyType: Internet
+            HTML5.ForwardAuthToken: true
+            HTML5.DynamicDestination: true
+
+  - name: Bookingsbooking
+    type: html5
+    path: app/booking
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+
+  - name: Bookings-destinations
+    type: com.sap.application.content
+    requires:
+      - name: Bookings-auth
+        parameters:
+          service-key:
+            name: Bookings-auth-key
+      - name: Bookings-html5-repo-host
+        parameters:
+          service-key:
+            name: Bookings-html5-repo-host-key
+      - name: srv-api
+      - name: Bookings-destination
+        parameters:
+          content-target: true
+    build-parameters:
+      no-source: true
+    parameters:
+      content:
+        subaccount:
+          existing_destinations_policy: update
+          destinations:
+            - Name: Bookings-html5-repository
+              ServiceInstanceName: Bookings-html5-repo-host
+              ServiceKeyName: Bookings-html5-repo-host-key
+              sap.cloud.service: Bookings.service
+            - Name: Bookings-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: Bookings-auth
+              ServiceKeyName: Bookings-auth-key
+              sap.cloud.service: Bookings.service
+        instance:
+          existing_destinations_policy: update
+          destinations:
+            - Name: Bookings-html5-repository
+              ServiceInstanceName: Bookings-html5-repo-host
+              ServiceKeyName: Bookings-html5-repo-host-key
+              sap.cloud.service: Bookings.service
+            - Name: Bookings-auth
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: Bookings-auth
+              ServiceKeyName: Bookings-auth-key
+              sap.cloud.service: Bookings.service
+
+resources:
+  - name: Bookings-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: Bookings-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+        role-collections:
+          - name: 'viewer (Bookings ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.viewer'
+          - name: 'admin (Bookings ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.admin'
+  - name: Bookings-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: Bookings-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+    requires:
+      - name: srv-api
+
+  - name: Bookings-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host

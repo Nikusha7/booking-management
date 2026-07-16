@@ -1,0 +1,6 @@
+ID,firstName,lastName,email,phone,passportNumber,createdAt,createdBy,modifiedAt,modifiedBy,balance
+20324081-f488-45f3-94d2-682fbe801c39,John,Smith,john.smith@example.com,+995555100001,GE1234567,2026-07-13T10:00:00.000Z,system,2026-07-13T10:00:00.000Z,system,2500.00
+8a4e7c92-3d21-4f56-9a88-123456789abc,Anna,Brown,anna.brown@example.com,+995555100002,GE2345678,2026-07-13T10:05:00.000Z,system,2026-07-13T10:05:00.000Z,system,5000.00
+5f9d1a73-8b44-4c22-b765-987654321def,David,Wilson,david.wilson@example.com,+995555100003,GE3456789,2026-07-13T10:10:00.000Z,system,2026-07-13T10:10:00.000Z,system,3000.00
+7c2e6b91-5a33-4d77-8f11-456789123abc,Maria,Johnson,maria.johnson@example.com,+995555100004,GE4567890,2026-07-13T10:15:00.000Z,system,2026-07-13T10:15:00.000Z,system,2444.50
+9b6f4c28-1e55-49aa-b322-789123456def,Alex,Taylor,alex.taylor@example.com,+995555100005,GE5678901,2026-07-13T10:20:00.000Z,system,2026-07-13T10:20:00.000Z,system,1500.00

@@ -1,0 +1,6 @@
+ID,title,startDate,endDate,price,availableSeats,destination_ID,createdAt,createdBy,modifiedAt,modifiedBy,flight,hotel
+10103137-9f61-4aed-afe8-ccd48a0c805f,Paris Summer Adventure,2026-08-10,2026-08-20,1500.00,25,30751244-79fd-495b-bd1d-72b9c6b7c646,2026-07-13T10:00:00.000Z,system,2026-07-13T10:00:00.000Z,system,Tbilisi-Paris Flight,Hilton Paris
+42a6d8e1-2c94-4b31-a7f5-112233445566,Tokyo Cultural Experience,2026-09-05,2026-09-15,2300.00,0,41862355-8aec-406c-cd2e-83c9d8c8d757,2026-07-13T10:05:00.000Z,system,2026-07-13T10:05:00.000Z,system,Tbilisi-Tokyo Flight,Tokyo Grand Hotel
+73b9f024-6d18-4f82-b921-223344556677,Rome Historical Tour,2026-10-01,2026-10-08,1200.00,30,52973466-9bfd-417d-de3f-94d0e9d9e868,2026-07-13T10:10:00.000Z,system,2026-07-13T10:10:00.000Z,system,Rome Express Flight,Rome Palace Hotel
+84c0a135-7e29-45aa-c832-334455667788,Dubai Luxury Escape,2026-11-12,2026-11-18,2800.00,20,63084577-af0e-428e-ef4g-a5e1f0e0f979,2026-07-13T10:15:00.000Z,system,2026-07-13T10:15:00.000Z,system,Dubai Emirates Flight,Dubai Luxury Resort
+95d1b246-8f30-46bb-d943-445566778899,Barcelona Beach Holiday,2026-12-03,2026-12-12,1700.00,40,74195688-b01f-439f-f05h-b6f2a1f1fa80,2026-07-13T10:20:00.000Z,system,2026-07-13T10:20:00.000Z,system,Barcelona Iberia Flight,Barcelona Beach Hotel

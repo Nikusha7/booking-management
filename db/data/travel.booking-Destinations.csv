@@ -1,0 +1,6 @@
+ID,country,city,createdAt,createdBy,modifiedAt,modifiedBy
+30751244-79fd-495b-bd1d-72b9c6b7c646,France,Paris,2026-07-13T09:00:00.000Z,system,2026-07-13T09:00:00.000Z,system
+41862355-8aec-406c-cd2e-83c9d8c8d757,Japan,Tokyo,2026-07-13T09:05:00.000Z,system,2026-07-13T09:05:00.000Z,system
+52973466-9bfd-417d-de3f-94d0e9d9e868,Italy,Rome,2026-07-13T09:10:00.000Z,system,2026-07-13T09:10:00.000Z,system
+63084577-af0e-428e-ef4a-a5e1f0e0f979,United Arab Emirates,Dubai,2026-07-13T09:15:00.000Z,system,2026-07-13T09:15:00.000Z,system
+74195688-b01f-439f-f05b-b6f2a1f1fa80,Spain,Barcelona,2026-07-13T09:20:00.000Z,system,2026-07-13T09:20:00.000Z,system
