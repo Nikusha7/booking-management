@@ -14,6 +14,10 @@ service TravelBookingService {
     {
         grant: '*',
         to: 'admin'
+    },
+    {
+        grant: 'READ',
+        to: 'integration'
     }
     ]
     entity Bookings as projection on db.Bookings;
