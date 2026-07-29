@@ -39,23 +39,23 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
 
          try {
 
-            // 1. Create JSON payload
+            // Create JSON payload
             String jsonPayload = createPayload(booking);
 
-            // 1. Retrieve the destination configured in SAP BTP
+            // Retrieve the destination configured in SAP BTP
             HttpDestination destination = DestinationAccessor.getDestination(DESTINATION_NAME).asHttp();
 
-            // 2. Fetch the preconfigured HttpClient from the Cloud SDK (handles tokens and proxies)
+            // Fetch the preconfigured HttpClient from the Cloud SDK (handles tokens and proxies)
             var httpClient = HttpClientAccessor.getHttpClient(destination);
 
-            // 3. Define the specific iFlow endpoint suffix path/ Create POST request
+            // Define the specific iFlow endpoint suffix path/ Create POST request
             HttpPost httpPostRequest = new HttpPost(IFLOW_PATH);
 
-            // 4. Set Headers and Payload Body
+            // Set Headers and Payload Body
             httpPostRequest.setHeader("Content-Type", "application/json");
             httpPostRequest.setEntity(new StringEntity(jsonPayload, "UTF-8"));
 
-            // 5. Execute the POST request
+            // Execute the POST request
             HttpResponse response = httpClient.execute(httpPostRequest);
             
             int statusCode = response.getStatusLine().getStatusCode();

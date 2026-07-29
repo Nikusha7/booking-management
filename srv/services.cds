@@ -8,11 +8,11 @@ service TravelBookingService {
     @odata.draft.enabled
     @restrict: [
     {
-        grant: '*',
+        grant: 'READ',
         to: 'viewer'
     },
     {
-        grant: ['CREATE','UPDATE','DELETE'],
+        grant: '*',
         to: 'admin'
     }
     ]
