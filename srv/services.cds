@@ -1,12 +1,6 @@
 using travel.booking as db from '../db/schema';
 
-service TravelBookingService {
-
-    @odata.draft.enabled
-    entity Travelers as projection on db.Travelers;
-
-    @odata.draft.enabled
-    @restrict: [
+@restrict: [
     {
         grant: 'READ',
         to: 'viewer'
@@ -20,6 +14,12 @@ service TravelBookingService {
         to: 'integration'
     }
     ]
+service TravelBookingService {
+
+    @odata.draft.enabled
+    entity Travelers as projection on db.Travelers;
+    
+    @odata.draft.enabled
     entity Bookings as projection on db.Bookings;
 
     entity Insurances as projection on db.Insurances;
