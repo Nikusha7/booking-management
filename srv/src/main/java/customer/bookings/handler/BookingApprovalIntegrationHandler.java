@@ -11,13 +11,14 @@ import com.sap.cds.services.handler.annotations.ServiceName;
 import com.sap.cds.services.persistence.PersistenceService;
 
 import cds.gen.travelbookingservice.Bookings;
-import cds.gen.travelbookingservice.Destinations;
-import cds.gen.travelbookingservice.Destinations_;
 import cds.gen.travelbookingservice.TravelBookingService_;
-import cds.gen.travelbookingservice.Travelers;
-import cds.gen.travelbookingservice.Travelers_;
-import cds.gen.travelbookingservice.Trips;
-import cds.gen.travelbookingservice.Trips_;
+
+import cds.gen.travel.booking.Travelers;
+import cds.gen.travel.booking.Travelers_;
+import cds.gen.travel.booking.Trips;
+import cds.gen.travel.booking.Trips_;
+import cds.gen.travel.booking.Destinations;
+import cds.gen.travel.booking.Destinations_;
 
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
@@ -108,6 +109,16 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
     private String buildBookingApprovalPayload(Bookings booking) {
 // fetching travelers and trips/destinations data to send it to iflow, 
 // so iflow will be able to fetch weather using latitude and longitude of specific city
+
+log.info("========== START BUILD PAYLOAD ==========");
+
+    log.info("Incoming booking object:");
+    log.info("Booking ID: {}", booking.getId());
+    log.info("Traveler ID: {}", booking.getTravelerId());
+    log.info("Trip ID: {}", booking.getTripId());
+
+
+    log.info("Fetching traveler...");
         Travelers traveler = persistenceService.run(
                 Select.from(Travelers_.class)
                 .where(t -> t.ID().eq(booking.getTravelerId()))
@@ -115,7 +126,7 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
         ).single(Travelers.class);
 
 
-
+    log.info("Fetching trip...");
         Trips trip = persistenceService.run(
                 Select.from(Trips_.class)
                 .where(t -> t.ID().eq(booking.getTripId()))
@@ -123,10 +134,13 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
         ).single(Trips.class);
 
 
+    log.info("Fetching destination...");
+    String destinationId = trip.getDestinationId();
+    log.info("Destination ID from trip: {}", destinationId);
 
         Destinations destination = persistenceService.run(
                 Select.from(Destinations_.class)
-                .where(d -> d.ID().eq(trip.getDestinationId()))
+                .where(d -> d.ID().eq(destinationId))
 
         ).single(Destinations.class);
 
