@@ -37,6 +37,9 @@ service TravelBookingService {
     ]
 service TravelBookingBPAService {
 
-    entity Bookings as projection on db.Bookings;
+     entity Bookings as projection on db.Bookings {
+        key ID,
+        status
+    };
 
 }
