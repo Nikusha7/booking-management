@@ -12,10 +12,6 @@ using travel.booking as db from '../db/schema';
     {
         grant: 'READ',
         to: 'integration'
-    },
-    {
-        grant: ['READ','UPDATE'],
-        to: 'bpa'
     }
     ]
 service TravelBookingService {
@@ -31,4 +27,16 @@ service TravelBookingService {
     entity Trips as projection on db.Trips;
 
     @readonly entity Destinations as projection on db.Destinations;
+}
+
+@restrict: [
+        {
+            grant: ['READ','UPDATE'],
+            to: 'bpa'
+        }
+    ]
+service TravelBookingBPAService {
+
+    entity Bookings as projection on db.Bookings;
+
 }
