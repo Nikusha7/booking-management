@@ -12,6 +12,10 @@ using travel.booking as db from '../db/schema';
     {
         grant: 'READ',
         to: 'integration'
+    },
+    {
+        grant: ['READ','UPDATE'],
+        to: 'bpa'
     }
     ]
 service TravelBookingService {

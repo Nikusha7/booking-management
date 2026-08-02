@@ -11,10 +11,15 @@
     {
       "name": "$XSAPPNAME.integration",
       "description": "Integration access"
+    },
+    {
+      "name": "$XSAPPNAME.bpa",
+      "description": "bpa access"
     }
   ],
   "authorities": [
-    "$XSAPPNAME.integration"
+    "$XSAPPNAME.integration",
+    "$XSAPPNAME.bpa"
   ],
   "attributes": [],
   "role-templates": [
@@ -39,6 +44,14 @@
       "description": "Technical integration role",
       "scope-references": [
         "$XSAPPNAME.integration"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "bpa",
+      "description": "bpa role",
+      "scope-references": [
+        "$XSAPPNAME.bpa"
       ],
       "attribute-references": []
     }
