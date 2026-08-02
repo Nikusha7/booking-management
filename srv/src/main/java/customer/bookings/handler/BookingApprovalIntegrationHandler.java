@@ -9,36 +9,39 @@ import com.sap.cds.services.handler.EventHandler;
 import com.sap.cds.services.handler.annotations.After;
 import com.sap.cds.services.handler.annotations.ServiceName;
 import com.sap.cds.services.persistence.PersistenceService;
-import cds.gen.travelbookingservice.Travelers;
-import cds.gen.travelbookingservice.Trips;
+
+import cds.gen.travelbookingservice.Bookings;
 import cds.gen.travelbookingservice.Destinations;
-import cds.gen.travelbookingservice.Travelers_;
-import cds.gen.travelbookingservice.Trips_;
 import cds.gen.travelbookingservice.Destinations_;
+import cds.gen.travelbookingservice.TravelBookingService_;
+import cds.gen.travelbookingservice.Travelers;
+import cds.gen.travelbookingservice.Travelers_;
+import cds.gen.travelbookingservice.Trips;
+import cds.gen.travelbookingservice.Trips_;
+
 import com.sap.cloud.sdk.cloudplatform.connectivity.DestinationAccessor;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpDestination;
 import com.sap.cloud.sdk.cloudplatform.connectivity.HttpClientAccessor;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
-
-import cds.gen.travelbookingservice.TravelBookingService_;
-import cds.gen.travelbookingservice.Bookings;
 
 
 
 @Component
 @ServiceName(TravelBookingService_.CDS_NAME)
 public class BookingApprovalIntegrationHandler implements EventHandler {
+
     private static final Logger log = LoggerFactory.getLogger(BookingApprovalIntegrationHandler.class);
     
     private final PersistenceService persistenceService;
 
-    public BookingApprovalIntegrationHandler(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
+    public BookingApprovalIntegrationHandler(
+        PersistenceService persistenceService) {
+    this.persistenceService = persistenceService;
+}
 
     private static final String DESTINATION_NAME = "MyIFlowDestination";
     private static final String IFLOW_PATH = "/travel/booking/";
@@ -53,15 +56,19 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
          try {
 
             // Create JSON payload
+            log.info("Building JSON payload...");
             String jsonPayload = buildBookingApprovalPayload(booking);
 
             // Retrieve the destination configured in SAP BTP
+            log.info("Resolving destination...");
             HttpDestination destination = DestinationAccessor.getDestination(DESTINATION_NAME).asHttp();
 
             // Fetch the preconfigured HttpClient from the Cloud SDK (handles tokens and proxies)
+            log.info("Creating HttpClient...");
             var httpClient = HttpClientAccessor.getHttpClient(destination);
 
             // Define the specific iFlow endpoint suffix path/ Create POST request
+            log.info("Preparing HTTP POST...");
             HttpPost httpPostRequest = new HttpPost(IFLOW_PATH);
 
             // Set Headers and Payload Body
@@ -69,6 +76,7 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
             httpPostRequest.setEntity(new StringEntity(jsonPayload, "UTF-8"));
 
             // Execute the POST request
+            log.info("Sending request to iFlow...");
             HttpResponse response = httpClient.execute(httpPostRequest);
             
             int statusCode = response.getStatusLine().getStatusCode();
@@ -81,10 +89,20 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
             }
 
         } catch (Exception e) {
-            log.error("Network or parsing error triggering iFlow: ", e);
-            throw new RuntimeException("iFlow connection failure", e);
+            log.error("========== iFlow Trigger Failed ==========");
+            log.error("Exception Type : {}", e.getClass().getName());
+            log.error("Message        : {}", e.getMessage());
+
+        if (e.getCause() != null) {
+            log.error("Cause Type     : {}", e.getCause().getClass().getName());
+            log.error("Cause Message  : {}", e.getCause().getMessage());
         }
-    
+
+        log.error("Full Stack Trace:", e);
+
+        throw new RuntimeException("iFlow connection failure", e);
+        }
+        
     }
 
     private String buildBookingApprovalPayload(Bookings booking) {
@@ -93,18 +111,23 @@ public class BookingApprovalIntegrationHandler implements EventHandler {
         Travelers traveler = persistenceService.run(
                 Select.from(Travelers_.class)
                 .where(t -> t.ID().eq(booking.getTravelerId()))
+
         ).single(Travelers.class);
+
 
 
         Trips trip = persistenceService.run(
                 Select.from(Trips_.class)
                 .where(t -> t.ID().eq(booking.getTripId()))
+
         ).single(Trips.class);
+
 
 
         Destinations destination = persistenceService.run(
                 Select.from(Destinations_.class)
                 .where(d -> d.ID().eq(trip.getDestinationId()))
+
         ).single(Destinations.class);
 
 
