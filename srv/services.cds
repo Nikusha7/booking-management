@@ -43,3 +43,9 @@ service TravelBookingBPAService {
     };
 
 }
+
+service MiniService {
+
+    entity Travelers as projection on db.Travelers;
+
+}
